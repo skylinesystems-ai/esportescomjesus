@@ -498,12 +498,20 @@ async function loadAuditLogs() {
 }
 
 async function getScopedDocs(collectionName) {
-  const byOrganization = await getDocs(query(collection(db, collectionName), where("organizationId", "==", state.organizationId)));
-  const byOwner = await getDocs(query(collection(db, collectionName), where("userId", "==", state.user.uid)));
   const items = new Map();
+  const results = await Promise.allSettled([
+    getDocs(query(collection(db, collectionName), where("organizationId", "==", state.organizationId))),
+    getDocs(query(collection(db, collectionName), where("userId", "==", state.user.uid)))
+  ]);
 
-  byOrganization.docs.forEach((item) => items.set(item.id, { id: item.id, ...item.data() }));
-  byOwner.docs.forEach((item) => items.set(item.id, { id: item.id, ...item.data() }));
+  results.forEach((result) => {
+    if (result.status !== "fulfilled") return;
+    result.value.docs.forEach((item) => items.set(item.id, { id: item.id, ...item.data() }));
+  });
+
+  if (results.every((result) => result.status === "rejected")) {
+    throw results[0].reason;
+  }
 
   await migrateLegacyDocs(collectionName, [...items.values()].filter((item) => !item.organizationId));
   return [...items.values()].map((item) => ({

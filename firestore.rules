@@ -82,8 +82,8 @@ service cloud.firestore {
       return isOrgMember(resource.data.organizationId);
     }
 
-    function legacyOwnerRead() {
-      return resource.data.organizationId == null && isOwner(resource.data.userId);
+    function ownerRead() {
+      return isOwner(resource.data.userId);
     }
 
     function legacyOwnerUpdate() {
@@ -181,7 +181,7 @@ service cloud.firestore {
     }
 
     match /alunos/{docId} {
-      allow read: if ownsExistingOrg() || legacyOwnerRead();
+      allow read: if ownsExistingOrg() || ownerRead();
       allow create: if ownsIncomingOrg() && canWriteStudents();
       allow update: if (
           ownsExistingOrg()
@@ -195,7 +195,7 @@ service cloud.firestore {
     }
 
     match /turmas/{docId} {
-      allow read: if ownsExistingOrg() || legacyOwnerRead();
+      allow read: if ownsExistingOrg() || ownerRead();
       allow create: if ownsIncomingOrg() && canWriteClasses();
       allow update: if (
           ownsExistingOrg()
@@ -209,7 +209,7 @@ service cloud.firestore {
     }
 
     match /presencas/{docId} {
-      allow read: if ownsExistingOrg() || legacyOwnerRead();
+      allow read: if ownsExistingOrg() || ownerRead();
       allow create: if ownsIncomingOrg() && canWriteAttendance();
       allow update: if (
           ownsExistingOrg()
@@ -223,7 +223,10 @@ service cloud.firestore {
     }
 
     match /pagamentos/{docId} {
-      allow read: if (ownsExistingOrg() && canReadFinance()) || legacyOwnerRead();
+      allow read: if (
+          (ownsExistingOrg() || ownerRead())
+          && canReadFinance()
+        );
       allow create: if ownsIncomingOrg() && canWriteFinance();
       allow update: if (
           ownsExistingOrg()
