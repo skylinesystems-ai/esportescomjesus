@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Proposta ECJ Manaus - Sistema e Manutenção</title>
+    <style>
+      :root {
+        --bg: #07080b;
+        --panel: #111318;
+        --panel-2: #171a22;
+        --text: #f9fafb;
+        --muted: #a7afbd;
+        --line: rgba(255, 255, 255, 0.14);
+        --red: #d41432;
+        --red-2: #ff3859;
+        --soft-red: rgba(212, 20, 50, 0.16);
+        --success: #24c987;
+        --paper-width: 794px;
+        --paper-height: 1123px;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        color: var(--text);
+        background: #121418;
+      }
+
+      .flyer {
+        position: relative;
+        width: min(var(--paper-width), 100%);
+        height: var(--paper-height);
+        overflow: hidden;
+        padding: 32px;
+        background:
+          linear-gradient(180deg, rgba(212, 20, 50, 0.18), transparent 34%),
+          repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 12px),
+          var(--bg);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 26px 80px rgba(0, 0, 0, 0.45);
+      }
+
+      .flyer::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        border: 8px solid rgba(212, 20, 50, 0.3);
+      }
+
+      .content {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        gap: 10px;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .brand-mark {
+        width: 54px;
+        height: 54px;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(255, 56, 89, 0.7);
+        border-radius: 18px;
+        color: #ffffff;
+        background: linear-gradient(145deg, #d41432, #7b091d);
+        box-shadow: 0 16px 32px rgba(212, 20, 50, 0.28);
+        font-size: 1.05rem;
+        font-weight: 950;
+      }
+
+      .brand strong {
+        display: block;
+        font-size: 1.05rem;
+        line-height: 1.15;
+      }
+
+      .brand span,
+      .tag {
+        color: var(--muted);
+        font-size: 0.8rem;
+        font-weight: 750;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .tag {
+        padding: 10px 14px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.055);
+      }
+
+      .hero {
+        display: grid;
+        gap: 10px;
+        padding: 14px 0 0;
+      }
+
+      .hero h1 {
+        margin: 0;
+        max-width: 680px;
+        font-size: 2.55rem;
+        line-height: 0.95;
+        letter-spacing: 0;
+      }
+
+      .hero h1 span {
+        color: var(--red-2);
+      }
+
+      .hero p {
+        max-width: 620px;
+        margin: 0;
+        color: #e8ecf3;
+        font-size: 0.92rem;
+        line-height: 1.34;
+      }
+
+      .highlight {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: 14px;
+        align-items: stretch;
+      }
+
+      .mockup {
+        position: relative;
+        display: grid;
+        gap: 10px;
+        padding: 14px;
+        border: 1px solid rgba(255, 56, 89, 0.38);
+        border-radius: 24px;
+        background:
+          linear-gradient(155deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.025)),
+          var(--panel);
+        box-shadow: 0 22px 46px rgba(0, 0, 0, 0.36);
+      }
+
+      .mockup::after {
+        content: "";
+        position: absolute;
+        right: 24px;
+        top: 24px;
+        width: 68px;
+        height: 9px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.18);
+      }
+
+      .screen-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-right: 84px;
+      }
+
+      .screen-title strong {
+        font-size: 1.05rem;
+      }
+
+      .screen-title span {
+        color: var(--success);
+        font-size: 0.82rem;
+        font-weight: 850;
+      }
+
+      .metrics {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .metric {
+        min-height: 54px;
+        padding: 9px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.055);
+      }
+
+      .metric span {
+        display: block;
+        color: var(--muted);
+        font-size: 0.74rem;
+        font-weight: 760;
+      }
+
+      .metric strong {
+        display: block;
+        margin-top: 5px;
+        font-size: 0.98rem;
+      }
+
+      .proposal-card {
+        display: grid;
+        gap: 10px;
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        background: linear-gradient(180deg, rgba(212, 20, 50, 0.14), rgba(255, 255, 255, 0.04));
+      }
+
+      .proposal-card h2,
+      .section h2 {
+        margin: 0;
+        font-size: 1.18rem;
+      }
+
+      .proposal-card p {
+        margin: 0;
+        color: #e7ebf2;
+        font-size: 0.8rem;
+        line-height: 1.26;
+      }
+
+      .price-box {
+        padding: 10px;
+        border: 1px solid rgba(255, 56, 89, 0.45);
+        border-radius: 16px;
+        background: rgba(0, 0, 0, 0.22);
+      }
+
+      .price-box span {
+        display: block;
+        color: var(--muted);
+        font-size: 0.76rem;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .price-box strong {
+        display: block;
+        margin-top: 7px;
+        font-size: 0.9rem;
+      }
+
+      .section {
+        display: grid;
+        gap: 9px;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.045);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+      }
+
+      .item {
+        min-height: 58px;
+        padding: 9px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 16px;
+        background: var(--panel-2);
+      }
+
+      .item b {
+        display: block;
+        margin-bottom: 5px;
+        color: #ffffff;
+        font-size: 0.78rem;
+      }
+
+      .item span {
+        color: var(--muted);
+        font-size: 0.66rem;
+        line-height: 1.18;
+      }
+
+      .maintenance {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .checklist {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 5px;
+      }
+
+      .checklist li {
+        position: relative;
+        padding-left: 24px;
+        color: #edf1f7;
+        font-size: 0.76rem;
+        line-height: 1.18;
+      }
+
+      .checklist li::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 8px;
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--red-2);
+        box-shadow: 0 0 14px rgba(255, 56, 89, 0.75);
+      }
+
+      .cta {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 14px;
+        align-items: center;
+        padding: 13px 16px;
+        border-radius: 22px;
+        background: linear-gradient(135deg, var(--red), #7b091d);
+        box-shadow: 0 24px 48px rgba(212, 20, 50, 0.28);
+      }
+
+      .cta h2 {
+        margin: 0;
+        font-size: 1.3rem;
+      }
+
+      .cta p {
+        margin: 6px 0 0;
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 0.88rem;
+        line-height: 1.25;
+      }
+
+      .cta strong {
+        display: inline-flex;
+        align-items: center;
+        min-height: 42px;
+        padding: 0 16px;
+        border-radius: 999px;
+        color: #0b0c10;
+        background: #ffffff;
+        font-size: 0.95rem;
+        white-space: nowrap;
+      }
+
+      .footer-note {
+        color: var(--muted);
+        font-size: 0.7rem;
+        line-height: 1.3;
+        text-align: center;
+      }
+
+      @media print {
+        @page {
+          size: A4 portrait;
+          margin: 0;
+        }
+
+        body {
+          padding: 0;
+          background: #000;
+        }
+
+        .flyer {
+          width: 210mm;
+          min-height: 297mm;
+          border: 0;
+          box-shadow: none;
+        }
+      }
+
+      @media (max-width: 760px) {
+        body {
+          padding: 0;
+        }
+
+        .flyer {
+          min-height: 100vh;
+          padding: 28px 18px;
+        }
+
+        .topbar,
+        .highlight,
+        .maintenance,
+        .cta {
+          grid-template-columns: 1fr;
+        }
+
+        .topbar {
+          display: grid;
+        }
+
+        .hero h1 {
+          font-size: 2.55rem;
+        }
+
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <article class="flyer">
+      <div class="content">
+        <header class="topbar">
+          <div class="brand">
+            <div class="brand-mark">ECJ</div>
+            <div>
+              <strong>Esportes com Jesus Manaus</strong>
+              <span>Proposta comercial</span>
+            </div>
+          </div>
+          <div class="tag">Sistema + Manutenção Mensal</div>
+        </header>
+
+        <section class="hero">
+          <h1>Gestão esportiva <span>profissional</span> para o instituto.</h1>
+          <p>
+            Plataforma web personalizada para organizar alunos, turmas, presença,
+            mensalidades e cobranças em um só lugar.
+          </p>
+        </section>
+
+        <section class="highlight">
+          <div class="mockup" aria-label="Resumo visual do sistema">
+            <div class="screen-title">
+              <strong>Painel ECJ</strong>
+              <span>online</span>
+            </div>
+            <div class="metrics">
+              <div class="metric">
+                <span>Alunos ativos</span>
+                <strong>100%</strong>
+              </div>
+              <div class="metric">
+                <span>Presença do dia</span>
+                <strong>Check-in</strong>
+              </div>
+              <div class="metric">
+                <span>Mensalidades</span>
+                <strong>Financeiro</strong>
+              </div>
+              <div class="metric">
+                <span>Cobranças</span>
+                <strong>WhatsApp</strong>
+              </div>
+            </div>
+          </div>
+
+          <aside class="proposal-card">
+            <h2>Oferta para implantação</h2>
+            <p>
+              Sistema pronto para uso, com visual profissional, acesso por login
+              e dados separados por conta.
+            </p>
+            <div class="price-box">
+              <span>Modelo comercial</span>
+              <strong>Implantação do sistema + manutenção mensal</strong>
+            </div>
+            <p>
+              A mensalidade cobre suporte, ajustes e evolução contínua da plataforma.
+            </p>
+          </aside>
+        </section>
+
+        <section class="section">
+          <h2>O que o instituto recebe</h2>
+          <div class="grid">
+            <div class="item">
+              <b>Gestão de alunos</b>
+              <span>Cadastro, status, responsáveis, WhatsApp e busca rápida.</span>
+            </div>
+            <div class="item">
+              <b>Turmas e horários</b>
+              <span>Modalidades, professores, dias, vagas e mensalidade padrão.</span>
+            </div>
+            <div class="item">
+              <b>Presença digital</b>
+              <span>Check-in por turma: presente, falta, atraso e reposição.</span>
+            </div>
+            <div class="item">
+              <b>Financeiro</b>
+              <span>Mensalidades, vencimentos, atrasos e receita prevista.</span>
+            </div>
+            <div class="item">
+              <b>Cobrança no WhatsApp</b>
+              <span>Mensagem pronta para lembrar mensalidades em atraso.</span>
+            </div>
+            <div class="item">
+              <b>Acesso seguro</b>
+              <span>Login por e-mail, dados separados e perfis de equipe.</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Manutenção mensal inclusa</h2>
+          <div class="maintenance">
+            <ul class="checklist">
+              <li>Suporte técnico mensal.</li>
+              <li>Pequenos ajustes e correções.</li>
+              <li>Monitoramento básico do sistema.</li>
+            </ul>
+            <ul class="checklist">
+              <li>Atualização de turmas e textos.</li>
+              <li>Melhorias em telas e fluxos.</li>
+              <li>Apoio para uso da equipe.</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="cta">
+          <div>
+            <h2>Menos planilhas. Mais controle.</h2>
+            <p>Uma operação mais organizada para formar atletas e transformar vidas.</p>
+          </div>
+          <strong>Agendar demonstração</strong>
+        </section>
+
+        <p class="footer-note">
+          Proposta de apresentação para o responsável do Instituto Esportes com Jesus Manaus.
+          Valores definidos conforme implantação, suporte e quantidade de usuários.
+        </p>
+      </div>
+    </article>
+  </body>
+</html>
