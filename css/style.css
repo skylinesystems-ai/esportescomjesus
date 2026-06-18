@@ -71,6 +71,10 @@ button:disabled {
   opacity: 0.55;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 .app-background {
   position: fixed;
   inset: 0;

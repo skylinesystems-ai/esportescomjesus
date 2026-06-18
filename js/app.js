@@ -59,6 +59,7 @@ const rolePermissions = {
 };
 
 const scopedCollections = ["alunos", "turmas", "presencas", "pagamentos"];
+const routeViews = ["dashboard", "alunos", "turmas", "presenca", "financeiro", "configuracoes"];
 
 const officialClassTemplates = [
   {
@@ -236,10 +237,15 @@ function bindAuthEvents() {
 }
 
 function bindNavigationEvents() {
-  $$(".nav-item").forEach((button) => {
-    button.addEventListener("click", () => showSection(button.dataset.view));
+  document.addEventListener("click", (event) => {
+    const button = event.target.closest(".nav-item[data-view]");
+    if (!button) return;
+
+    event.preventDefault();
+    showSection(button.dataset.view, { scrollToTop: true, updateHash: true });
   });
 
+  window.addEventListener("popstate", () => showSection(getRouteView(), { updateHash: false }));
   $("#reloadDashboardButton").addEventListener("click", loadAllData);
 }
 
@@ -413,7 +419,18 @@ function showAppView() {
   $("#appShell").classList.remove("is-hidden");
 }
 
-function showSection(viewName) {
+function showSection(viewName, options = {}) {
+  const settings = {
+    scrollToTop: false,
+    updateHash: false,
+    replaceHash: false,
+    ...options
+  };
+
+  if (!routeViews.includes(viewName)) {
+    viewName = "dashboard";
+  }
+
   if (viewName === "financeiro" && !(can("finance:read") || can("finance:write"))) {
     notify("Você não tem acesso ao financeiro.", "error");
     viewName = "dashboard";
@@ -433,6 +450,32 @@ function showSection(viewName) {
 
   if (viewName === "presenca") renderAttendance();
   if (viewName === "financeiro") renderFinance();
+
+  if (settings.updateHash) {
+    setRouteHash(viewName, settings.replaceHash);
+  }
+
+  if (settings.scrollToTop) {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+}
+
+function getRouteView() {
+  const hashView = window.location.hash.replace("#", "");
+  return routeViews.includes(hashView) ? hashView : "dashboard";
+}
+
+function setRouteHash(viewName, replaceHash = false) {
+  const nextHash = `#${viewName}`;
+  if (window.location.hash === nextHash) return;
+
+  const nextUrl = `${window.location.pathname}${window.location.search}${nextHash}`;
+  if (replaceHash) {
+    window.history.replaceState(null, "", nextUrl);
+    return;
+  }
+
+  window.history.pushState(null, "", nextUrl);
 }
 
 async function loadAllData() {
@@ -456,6 +499,7 @@ async function loadAllData() {
 
     await Promise.all(tasks);
     renderAll();
+    showSection(getRouteView(), { updateHash: true, replaceHash: true });
   } catch (error) {
     notify(`Erro ao carregar dados: ${error.message}`, "error");
   }
