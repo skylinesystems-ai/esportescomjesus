@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Esportes com Jesus Manaus - sistema para gestao de alunos, turmas, presenca e financeiro."
+    />
+    <title>Esportes com Jesus Manaus</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="app-background" aria-hidden="true"></div>
+
+    <div id="loadingView" class="loading-view">
+      <div class="brand-mark">ECJ</div>
+      <p>Carregando Esportes com Jesus Manaus...</p>
+    </div>
+
+    <main id="authView" class="auth-view is-hidden">
+      <section class="auth-panel" aria-labelledby="authTitle">
+        <div class="auth-brand">
+          <span class="brand-mark">ECJ</span>
+          <div>
+            <p class="eyebrow">Instituto esportivo</p>
+            <h1 id="authTitle">Esportes com Jesus Manaus</h1>
+          </div>
+        </div>
+
+        <div class="auth-copy">
+          <h2>Formando atletas. <span>Transformando vidas.</span></h2>
+          <p>Turmas, horarios, alunos e pagamentos organizados para o instituto.</p>
+        </div>
+
+        <div class="auth-tabs" role="tablist" aria-label="Autenticação">
+          <button class="auth-tab is-active" type="button" data-auth-tab="login">Entrar</button>
+          <button class="auth-tab" type="button" data-auth-tab="register">Cadastrar</button>
+        </div>
+
+        <form id="loginForm" class="auth-form" autocomplete="on">
+          <label>
+            E-mail
+            <input id="loginEmail" type="email" autocomplete="email" required />
+          </label>
+          <label>
+            Senha
+            <input id="loginPassword" type="password" autocomplete="current-password" required />
+          </label>
+          <button class="primary-action" type="submit">Acessar painel</button>
+        </form>
+
+        <form id="registerForm" class="auth-form is-hidden" autocomplete="on">
+          <label>
+            Nome do gestor
+            <input id="registerName" type="text" autocomplete="name" required />
+          </label>
+          <label>
+            E-mail
+            <input id="registerEmail" type="email" autocomplete="email" required />
+          </label>
+          <label>
+            Senha
+            <input
+              id="registerPassword"
+              type="password"
+              autocomplete="new-password"
+              minlength="6"
+              required
+            />
+          </label>
+          <label>
+            Código da instituição
+            <input id="registerInviteCode" type="text" autocomplete="off" placeholder="Opcional" />
+          </label>
+          <button class="primary-action" type="submit">Criar conta</button>
+        </form>
+      </section>
+    </main>
+
+    <div id="appShell" class="app-shell is-hidden">
+      <aside class="sidebar" aria-label="Navegação principal">
+        <div class="sidebar-brand">
+          <span class="brand-mark">ECJ</span>
+          <div>
+            <strong>ECJ Manaus</strong>
+            <span id="userEmail">Conta ativa</span>
+          </div>
+        </div>
+
+        <nav class="nav-stack">
+          <button class="nav-item is-active" type="button" data-view="dashboard">Dashboard</button>
+          <button class="nav-item" type="button" data-view="alunos">Alunos</button>
+          <button class="nav-item" type="button" data-view="turmas">Turmas</button>
+          <button class="nav-item" type="button" data-view="presenca">Presença</button>
+          <button class="nav-item" type="button" data-view="financeiro">Financeiro</button>
+          <button class="nav-item" type="button" data-view="configuracoes">Config</button>
+        </nav>
+
+        <button id="logoutButton" class="ghost-action logout-button" type="button">Sair</button>
+      </aside>
+
+      <header class="mobile-topbar">
+        <div class="sidebar-brand">
+          <span class="brand-mark">ECJ</span>
+          <strong>ECJ Manaus</strong>
+        </div>
+        <button id="mobileLogoutButton" class="ghost-action" type="button">Sair</button>
+      </header>
+
+      <main class="content-shell">
+        <section id="dashboardView" class="view-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Operacao</p>
+              <h2>Dashboard</h2>
+            </div>
+            <button id="reloadDashboardButton" class="ghost-action" type="button">Atualizar</button>
+          </div>
+
+          <article class="headline-card">
+            <p class="eyebrow">#ESPORTES COM JESUS MANAUS</p>
+            <h2>Formando atletas. <span>Transformando vidas.</span></h2>
+            <p>Jiu-Jitsu, Funcional, Kickboxing, Futsal, Jiu-Jitsu Kids e Reforco Escolar.</p>
+          </article>
+
+          <article class="presence-hero">
+            <h2><span id="dashboardHeadlinePresence">0</span> alunos presentes hoje.</h2>
+            <p>Check-in direto no app. Frequencia em tempo real.</p>
+          </article>
+
+          <section class="schedule-board" aria-label="Horarios oficiais">
+            <div class="schedule-heading">
+              <h3>Horarios oficiais</h3>
+              <span>Instituto ECJ Manaus</span>
+            </div>
+            <div class="schedule-grid">
+              <article class="schedule-day">
+                <h4>Segunda, quarta e sexta</h4>
+                <div class="schedule-items">
+                  <span>Funcional <strong>8:00</strong></span>
+                  <span>Kickboxing <strong>17:00</strong></span>
+                  <span>Jiu-Jitsu Kids <strong>18:00</strong></span>
+                  <span>Funcional <strong>18:00</strong></span>
+                  <span>Jiu-Jitsu <strong>19:00</strong></span>
+                </div>
+              </article>
+              <article class="schedule-day">
+                <h4>Terca e quinta</h4>
+                <div class="schedule-items">
+                  <span>Reforco Escolar <strong>17:30</strong></span>
+                  <span>Futsal <strong>17:30</strong></span>
+                  <span>Jiu-Jitsu <strong>18:00</strong></span>
+                  <span>Kickboxing <strong>19:00</strong></span>
+                  <span>Funcional <strong>19:00</strong></span>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <div class="stat-grid">
+            <article class="stat-card">
+              <span>Total de alunos ativos</span>
+              <strong id="statActiveStudents">0</strong>
+            </article>
+            <article class="stat-card">
+              <span>Alunos inadimplentes</span>
+              <strong id="statLateStudents">0</strong>
+            </article>
+            <article class="stat-card">
+              <span>Turmas cadastradas</span>
+              <strong id="statClasses">0</strong>
+            </article>
+            <article class="stat-card">
+              <span>Presenças do dia</span>
+              <strong id="statTodayAttendance">0</strong>
+            </article>
+            <article class="stat-card">
+              <span>Receita prevista do mês</span>
+              <strong id="statExpectedRevenue">R$ 0,00</strong>
+            </article>
+            <article class="stat-card warning">
+              <span>Mensalidades vencidas</span>
+              <strong id="statOverduePayments">0</strong>
+            </article>
+          </div>
+
+          <div class="dashboard-grid">
+            <article class="panel-card">
+              <div class="panel-title">
+                <h3>Distribuição de status</h3>
+              </div>
+              <div id="statusSummary" class="summary-list"></div>
+            </article>
+
+            <article class="panel-card">
+              <div class="panel-title">
+                <h3>Resumo financeiro</h3>
+              </div>
+              <div class="finance-meter">
+                <div>
+                  <span>Recebido</span>
+                  <strong id="dashboardReceived">R$ 0,00</strong>
+                </div>
+                <div>
+                  <span>Em aberto</span>
+                  <strong id="dashboardOpen">R$ 0,00</strong>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="alunosView" class="view-section" hidden>
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">CRM esportivo</p>
+              <h2>Alunos</h2>
+            </div>
+            <button id="openStudentModalButton" class="primary-action compact" type="button">
+              Novo aluno
+            </button>
+          </div>
+
+          <div class="toolbar">
+            <label class="search-box">
+              Buscar aluno
+              <input id="studentSearch" type="search" placeholder="Digite um nome" />
+            </label>
+          </div>
+
+          <div id="studentsList" class="entity-list"></div>
+        </section>
+
+        <section id="turmasView" class="view-section" hidden>
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Agenda</p>
+              <h2>Turmas</h2>
+            </div>
+            <div class="section-actions">
+              <button id="seedOfficialClassesButton" class="ghost-action compact" type="button">
+                Criar turmas oficiais
+              </button>
+              <button id="openClassModalButton" class="primary-action compact" type="button">
+                Nova turma
+              </button>
+            </div>
+          </div>
+
+          <div id="classesList" class="entity-list grid-list"></div>
+        </section>
+
+        <section id="presencaView" class="view-section" hidden>
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Check-in diario</p>
+              <h2>Presenca</h2>
+            </div>
+            <span id="todayLabel" class="date-pill">Hoje</span>
+          </div>
+
+          <div class="panel-card control-panel">
+            <label>
+              Selecionar turma
+              <select id="attendanceClassSelect"></select>
+            </label>
+            <div class="presence-count">
+              Presentes hoje
+              <strong id="presenceTotal">0</strong>
+            </div>
+          </div>
+
+          <div id="attendanceList" class="entity-list"></div>
+        </section>
+
+        <section id="financeiroView" class="view-section" hidden>
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Receita recorrente</p>
+              <h2>Financeiro</h2>
+            </div>
+            <button id="syncPaymentsButton" class="primary-action compact" type="button">
+              Atualizar mes
+            </button>
+          </div>
+
+          <article class="headline-card finance-headline">
+            <h2>Cobranca automatica. <span>Mensalidade em dia.</span></h2>
+            <p>Controle pagamentos, atrasos e cobrancas pelo WhatsApp.</p>
+          </article>
+
+          <div class="panel-card control-panel">
+            <label>
+              Mes de referencia
+              <input id="financeMonth" type="month" />
+            </label>
+          </div>
+
+          <div class="stat-grid finance-stats">
+            <article class="stat-card">
+              <span>Receita prevista</span>
+              <strong id="financeExpected">R$ 0,00</strong>
+            </article>
+            <article class="stat-card success">
+              <span>Receita recebida</span>
+              <strong id="financeReceived">R$ 0,00</strong>
+            </article>
+            <article class="stat-card warning">
+              <span>Mensalidades atrasadas</span>
+              <strong id="financeLate">R$ 0,00</strong>
+            </article>
+          </div>
+
+          <div id="paymentsList" class="entity-list"></div>
+        </section>
+
+        <section id="configuracoesView" class="view-section" hidden>
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Empresa</p>
+              <h2>Configurações</h2>
+            </div>
+          </div>
+
+          <div class="settings-grid">
+            <article class="panel-card">
+              <div class="panel-title">
+                <h3>Instituição</h3>
+              </div>
+              <div class="info-list">
+                <div>
+                  <span>Nome</span>
+                  <strong id="settingsOrgName">Esportes com Jesus Manaus</strong>
+                </div>
+                <div>
+                  <span>Código para equipe</span>
+                  <strong id="settingsInviteCode">---</strong>
+                </div>
+                <div>
+                  <span>Seu perfil</span>
+                  <strong id="settingsCurrentRole">---</strong>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel-card">
+              <div class="panel-title">
+                <h3>Equipe e permissões</h3>
+              </div>
+              <div id="teamList" class="entity-list compact-list"></div>
+            </article>
+
+            <article class="panel-card audit-panel">
+              <div class="panel-title">
+                <h3>Auditoria recente</h3>
+              </div>
+              <div id="auditList" class="entity-list compact-list"></div>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <nav class="mobile-nav" aria-label="Navegação mobile">
+        <button class="nav-item is-active" type="button" data-view="dashboard">Dashboard</button>
+        <button class="nav-item" type="button" data-view="alunos">Alunos</button>
+        <button class="nav-item" type="button" data-view="turmas">Turmas</button>
+        <button class="nav-item" type="button" data-view="presenca">Presença</button>
+        <button class="nav-item" type="button" data-view="financeiro">Financeiro</button>
+        <button class="nav-item" type="button" data-view="configuracoes">Config</button>
+      </nav>
+    </div>
+
+    <div id="toastRoot" class="toast-root" aria-live="polite"></div>
+
+    <div id="studentModal" class="modal is-hidden" role="dialog" aria-modal="true" aria-labelledby="studentModalTitle">
+      <div class="modal-panel">
+        <div class="modal-heading">
+          <h2 id="studentModalTitle">Aluno</h2>
+          <button class="icon-button" type="button" data-close-modal="studentModal" aria-label="Fechar">×</button>
+        </div>
+
+        <form id="studentForm" class="modal-form">
+          <input id="studentId" type="hidden" />
+          <div class="form-grid">
+            <label>
+              Nome
+              <input id="studentName" type="text" required />
+            </label>
+            <label>
+              WhatsApp
+              <input id="studentWhatsapp" type="tel" />
+            </label>
+            <label>
+              Nome do responsável
+              <input id="studentGuardianName" type="text" />
+            </label>
+            <label>
+              Telefone do responsável
+              <input id="studentGuardianPhone" type="tel" />
+            </label>
+            <label>
+              Turma
+              <select id="studentClass"></select>
+            </label>
+            <label>
+              Valor da mensalidade
+              <input id="studentMonthlyFee" type="number" min="0" step="0.01" />
+            </label>
+            <label>
+              Dia de vencimento
+              <input id="studentDueDay" type="number" min="1" max="31" />
+            </label>
+            <label>
+              Status
+              <select id="studentStatus" required>
+                <option value="ativo">Ativo</option>
+                <option value="inadimplente">Inadimplente</option>
+                <option value="trancado">Trancado</option>
+                <option value="cancelado">Cancelado</option>
+              </select>
+            </label>
+          </div>
+          <label>
+            Observações
+            <textarea id="studentNotes" rows="4"></textarea>
+          </label>
+
+          <div class="modal-actions">
+            <button class="ghost-action" type="button" data-close-modal="studentModal">Cancelar</button>
+            <button class="primary-action" type="submit">Salvar aluno</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="classModal" class="modal is-hidden" role="dialog" aria-modal="true" aria-labelledby="classModalTitle">
+      <div class="modal-panel">
+        <div class="modal-heading">
+          <h2 id="classModalTitle">Turma</h2>
+          <button class="icon-button" type="button" data-close-modal="classModal" aria-label="Fechar">×</button>
+        </div>
+
+        <form id="classForm" class="modal-form">
+          <input id="classId" type="hidden" />
+          <div class="form-grid">
+            <label>
+              Nome da turma
+              <input id="className" type="text" required />
+            </label>
+            <label>
+              Modalidade
+              <input id="classSport" type="text" required />
+            </label>
+            <label>
+              Professor
+              <input id="classTeacher" type="text" />
+            </label>
+            <label>
+              Horário inicial
+              <input id="classStart" type="time" />
+            </label>
+            <label>
+              Horário final
+              <input id="classEnd" type="time" />
+            </label>
+            <label>
+              Limite de vagas
+              <input id="classLimit" type="number" min="0" />
+            </label>
+            <label>
+              Valor padrão da mensalidade
+              <input id="classDefaultFee" type="number" min="0" step="0.01" />
+            </label>
+          </div>
+
+          <fieldset class="days-fieldset">
+            <legend>Dias da semana</legend>
+            <label><input type="checkbox" name="classDays" value="Seg" /> Seg</label>
+            <label><input type="checkbox" name="classDays" value="Ter" /> Ter</label>
+            <label><input type="checkbox" name="classDays" value="Qua" /> Qua</label>
+            <label><input type="checkbox" name="classDays" value="Qui" /> Qui</label>
+            <label><input type="checkbox" name="classDays" value="Sex" /> Sex</label>
+            <label><input type="checkbox" name="classDays" value="Sáb" /> Sáb</label>
+            <label><input type="checkbox" name="classDays" value="Dom" /> Dom</label>
+          </fieldset>
+
+          <div class="modal-actions">
+            <button class="ghost-action" type="button" data-close-modal="classModal">Cancelar</button>
+            <button class="primary-action" type="submit">Salvar turma</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>

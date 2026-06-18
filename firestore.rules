@@ -1,0 +1,245 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function profilePath() {
+      return /databases/$(database)/documents/users/$(request.auth.uid);
+    }
+
+    function hasProfile() {
+      return signedIn() && exists(profilePath());
+    }
+
+    function profile() {
+      return get(profilePath()).data;
+    }
+
+    function userOrg() {
+      return hasProfile() ? profile().organizationId : "";
+    }
+
+    function userRole() {
+      return hasProfile() ? profile().role : "";
+    }
+
+    function isOwner(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    function isOrgMember(orgId) {
+      return signedIn() && hasProfile() && orgId == userOrg();
+    }
+
+    function isAdmin() {
+      return userRole() == "admin";
+    }
+
+    function organizationPath(orgId) {
+      return /databases/$(database)/documents/organizations/$(orgId);
+    }
+
+    function inviteCodePath(code) {
+      return /databases/$(database)/documents/inviteCodes/$(code);
+    }
+
+    function inviteMatchesIncomingOrg() {
+      let code = request.resource.data.joinedWithInviteCode;
+      return code is string
+        && exists(inviteCodePath(code))
+        && get(inviteCodePath(code)).data.active == true
+        && get(inviteCodePath(code)).data.organizationId == request.resource.data.organizationId;
+    }
+
+    function canWriteStudents() {
+      return userRole() in ["admin", "secretaria"];
+    }
+
+    function canWriteClasses() {
+      return userRole() in ["admin", "secretaria"];
+    }
+
+    function canWriteAttendance() {
+      return userRole() in ["admin", "secretaria", "professor"];
+    }
+
+    function canWriteFinance() {
+      return userRole() in ["admin", "financeiro"];
+    }
+
+    function canReadFinance() {
+      return userRole() in ["admin", "financeiro", "secretaria"];
+    }
+
+    function ownsIncomingOrg() {
+      return isOrgMember(request.resource.data.organizationId);
+    }
+
+    function ownsExistingOrg() {
+      return isOrgMember(resource.data.organizationId);
+    }
+
+    function legacyOwnerRead() {
+      return resource.data.organizationId == null && isOwner(resource.data.userId);
+    }
+
+    function legacyOwnerUpdate() {
+      return resource.data.organizationId == null
+        && isOwner(resource.data.userId)
+        && request.resource.data.organizationId == userOrg();
+    }
+
+    match /organizations/{orgId} {
+      allow create: if signedIn()
+        && request.resource.data.createdBy == request.auth.uid;
+
+      allow read: if signedIn()
+        && (
+          resource.data.createdBy == request.auth.uid
+          || isOrgMember(orgId)
+        );
+
+      allow update: if isAdmin()
+        && isOrgMember(orgId)
+        && request.resource.data.createdBy == resource.data.createdBy;
+
+      allow delete: if false;
+    }
+
+    match /inviteCodes/{code} {
+      allow get: if signedIn();
+      allow list: if false;
+
+      allow create: if signedIn()
+        && request.resource.data.code == code
+        && request.resource.data.organizationId is string
+        && request.resource.data.active is bool
+        && request.resource.data.createdBy == request.auth.uid
+        && exists(organizationPath(request.resource.data.organizationId))
+        && (
+          get(organizationPath(request.resource.data.organizationId)).data.createdBy == request.auth.uid
+          || (
+            isAdmin()
+            && isOrgMember(request.resource.data.organizationId)
+          )
+        );
+
+      allow update: if isAdmin()
+        && isOrgMember(resource.data.organizationId)
+        && request.resource.data.organizationId == resource.data.organizationId
+        && request.resource.data.code == resource.data.code;
+
+      allow delete: if false;
+    }
+
+    match /users/{userId} {
+      allow create: if signedIn()
+        && request.auth.uid == userId
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.organizationId is string
+        && (
+          (
+            request.resource.data.role == "professor"
+            && inviteMatchesIncomingOrg()
+          )
+          || (
+            request.resource.data.role == "admin"
+            && exists(organizationPath(request.resource.data.organizationId))
+            && get(organizationPath(request.resource.data.organizationId)).data.createdBy == request.auth.uid
+          )
+        );
+
+      allow read: if signedIn()
+        && (
+          request.auth.uid == userId
+          || isOrgMember(resource.data.organizationId)
+        );
+
+      allow update: if signedIn()
+        && (
+          (
+            request.auth.uid == userId
+            && resource.data.organizationId == request.resource.data.organizationId
+            && resource.data.role == request.resource.data.role
+          )
+          || (
+            request.auth.uid == userId
+            && resource.data.organizationId == null
+            && request.resource.data.organizationId is string
+          )
+          || (
+            isAdmin()
+            && isOrgMember(resource.data.organizationId)
+            && request.resource.data.organizationId == resource.data.organizationId
+          )
+        );
+
+      allow delete: if false;
+    }
+
+    match /alunos/{docId} {
+      allow read: if ownsExistingOrg() || legacyOwnerRead();
+      allow create: if ownsIncomingOrg() && canWriteStudents();
+      allow update: if (
+          ownsExistingOrg()
+          && ownsIncomingOrg()
+          && canWriteStudents()
+        ) || (
+          legacyOwnerUpdate()
+          && canWriteStudents()
+        );
+      allow delete: if ownsExistingOrg() && canWriteStudents();
+    }
+
+    match /turmas/{docId} {
+      allow read: if ownsExistingOrg() || legacyOwnerRead();
+      allow create: if ownsIncomingOrg() && canWriteClasses();
+      allow update: if (
+          ownsExistingOrg()
+          && ownsIncomingOrg()
+          && canWriteClasses()
+        ) || (
+          legacyOwnerUpdate()
+          && canWriteClasses()
+        );
+      allow delete: if ownsExistingOrg() && canWriteClasses();
+    }
+
+    match /presencas/{docId} {
+      allow read: if ownsExistingOrg() || legacyOwnerRead();
+      allow create: if ownsIncomingOrg() && canWriteAttendance();
+      allow update: if (
+          ownsExistingOrg()
+          && ownsIncomingOrg()
+          && canWriteAttendance()
+        ) || (
+          legacyOwnerUpdate()
+          && canWriteAttendance()
+        );
+      allow delete: if ownsExistingOrg() && isAdmin();
+    }
+
+    match /pagamentos/{docId} {
+      allow read: if (ownsExistingOrg() && canReadFinance()) || legacyOwnerRead();
+      allow create: if ownsIncomingOrg() && canWriteFinance();
+      allow update: if (
+          ownsExistingOrg()
+          && ownsIncomingOrg()
+          && canWriteFinance()
+        ) || (
+          legacyOwnerUpdate()
+          && canWriteFinance()
+        );
+      allow delete: if ownsExistingOrg() && canWriteFinance();
+    }
+
+    match /auditLogs/{docId} {
+      allow read: if ownsExistingOrg() && isAdmin();
+      allow create: if ownsIncomingOrg();
+      allow update, delete: if false;
+    }
+  }
+}
